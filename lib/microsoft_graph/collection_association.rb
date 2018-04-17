@@ -165,7 +165,8 @@ class MicrosoftGraph
       end
 
       unless last?
-        start = [@internal_values.size, start].max
+        # start = [@internal_values.size, start].max
+        start = 0
 
         fetch_next_page
 
@@ -186,7 +187,7 @@ class MicrosoftGraph
     private
 
     def last?
-      @loaded || @internal_values.size >= 1000
+      @loaded
     end
 
     def fetch_next_page
@@ -212,6 +213,7 @@ class MicrosoftGraph
       @next_link = result[:attributes]['@odata.next_link']
       @next_link.sub!(MicrosoftGraph::BASE_URL, "") if @next_link
 
+      @internal_values = []
       result[:attributes]['value'].each do |entity_hash|
         klass =
           if member_type = specified_member_type(entity_hash)
